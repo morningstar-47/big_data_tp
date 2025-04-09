@@ -1,0 +1,6 @@
+<configuration>
+  <property>
+    <name>dfs.blocksize</name>
+    <value>VALEUR PAR DEFAUT</value> <!-- 128MB au lieu de la valeur par défaut -->
+  </property>
+</configuration>
