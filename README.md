@@ -168,6 +168,16 @@ Ajoutez cette configuration:
 </property>
 ```
 
+## 👥 Contributeurs
+
+| Nom | GitHub |
+|-----|--------|
+| 🧑‍💻 J.C Emmanuel Mopeno-Bia | [@TonPseudo](https://github.com/morningstar-47) |
+| 🧑‍💻 Collègue 1 | [@PseudoCollegue1](https://github.com/PseudoCollegue1) |
+| 🧑‍💻 Collègue 2 | [@PseudoCollegue2](https://github.com/PseudoCollegue2) |
+| 🧑‍💻 Collègue 3 | [@PseudoCollegue3](https://github.com/PseudoCollegue3) |
+
+
 ## Conclusion
 
 Ce TP vous a permis de mettre en place un pipeline de données complet avec les technologies Big Data les plus courantes. Vous avez appris à :
