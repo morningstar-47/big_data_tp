@@ -67,41 +67,7 @@ jps
 
 ## Étape 3: Production de messages Kafka
 
-Créez un script Python `produce.py` pour envoyer des messages à Kafka:
-
-```python
-from confluent_kafka import Producer
-
-def delivery_callback(err, msg):
-    if err:
-        print(f"Failed to deliver message: {err}")
-    else:
-        print(f"Message delivered: {msg}")
-
-p = Producer({'bootstrap.servers': 'localhost:9092'})
-
-# Liste de 10 messages différents à envoyer
-messages = [
-    "Insérer ici votre premier message",
-    "Deuxieme message: Données en temps réel",
-    "Troisieme message: Traitement de flux Big Data",
-    "Quatrieme message: Kafka est un système de messagerie distribué",
-    "Cinquieme message: Utilisé pour les pipelines de données",
-    "Sixieme message: Compatible avec Hadoop",
-    "Septieme message: Haute disponibilité et tolérance aux pannes",
-    "Huitieme message: Traitement de millions de messages par seconde",
-    "Neuvieme message: Architecture basée sur les logs",
-    "Dixieme message: Fin de la séquence de test"
-]
-
-# Production des messages
-for message in messages:
-    p.produce('data_stream', message, callback=delivery_callback)
-    print(f"Message envoyé: {message}")
-
-# Attendre que tous les messages soient envoyés
-p.flush()
-```
+Utilisez le fichier `produce.py` fourni dans le répertoire pour produire une série de messages sur le topic data_stream.
 
 Exécutez le script:
 
@@ -118,51 +84,14 @@ python produce.py
 
 ## Étape 4: Consommation de messages Kafka
 
-Créez un script Python `consume.py` pour lire les messages de Kafka:
+Créez un script Python  pour lire les messages de Kafka:
+Utilisez le fichier `final_consume_hdfs.py` pour consommer les messages produits par Kafka.
 
-```python
-from confluent_kafka import Consumer, KafkaError
-
-# Configuration du consumer
-c = Consumer({
-    'bootstrap.servers': 'localhost:9092',
-    'group.id': 'my_group',
-    'auto.offset.reset': 'earliest'
-})
-
-# Abonnement au topic
-c.subscribe(['data_stream'])
-
-print("Démarrage du consumer pour le topic 'data_stream'...")
-print("En attente de messages...")
-
-# Boucle de consommation
-try:
-    while True:
-        msg = c.poll(timeout=1.0)
-        if msg is None:
-            continue
-        if msg.error():
-            if msg.error().code() == KafkaError._PARTITION_EOF:
-                print("Fin de partition atteinte")
-                continue
-            else:
-                print(f"Erreur: {msg.error()}")
-                break
-        
-        # Afficher le message reçu
-        print('Message reçu: {}'.format(msg.value().decode('utf-8')))
-except KeyboardInterrupt:
-    print("Consumer arrêté par l'utilisateur")
-finally:
-    # Fermer le consumer
-    c.close()
-```
 
 Exécutez le script:
 
 ```bash
-python consume.py
+python final_consume_hdfs.py
 ```
 
 ![Consommation de messages](images/consume_output.png)
@@ -177,82 +106,7 @@ hdfs dfs -mkdir -p /user/root/data
 hdfs dfs -chmod -R 777 /user/root/data
 ```
 
-Créez un script Python `consumeinhdfs.py` pour lire les messages Kafka et les écrire dans HDFS:
-
-```python
-from confluent_kafka import Consumer, KafkaError
-import subprocess
-import os
-
-# Chemin du fichier temporaire local
-temp_file = '/tmp/kafka_message.txt'
-
-# Chemin du fichier HDFS
-hdfs_path = '/user/root/data/data_stream.txt'
-
-# Configuration du consumer Kafka
-c = Consumer({
-    'bootstrap.servers': 'localhost:9092',
-    'group.id': 'my_group',
-    'auto.offset.reset': 'earliest'
-})
-
-# Abonnement au topic
-c.subscribe(['data_stream'])
-
-print(f"Démarrage du consumer et écriture dans HDFS à {hdfs_path}...")
-messages_count = 0
-
-try:
-    while True:
-        msg = c.poll(timeout=1.0)
-        if msg is None:
-            continue
-        if msg.error():
-            if msg.error().code() == KafkaError._PARTITION_EOF:
-                continue
-            else:
-                print(f"Erreur: {msg.error()}")
-                break
-
-        # Récupérer le message
-        message = msg.value().decode('utf-8')
-        print(f'Message reçu: {message}')
-        
-        # Écrire d'abord dans un fichier temporaire local
-        with open(temp_file, 'w') as f:
-            f.write(message + '\n')
-        
-        # Ajouter au fichier dans HDFS
-        try:
-            # Vérifier si le fichier existe déjà
-            check_cmd = f"hdfs dfs -test -e {hdfs_path}; echo $?"
-            result = subprocess.check_output(check_cmd, shell=True).decode().strip()
-            
-            if result == "0":
-                # Le fichier existe, ajouter le contenu
-                append_cmd = f"hdfs dfs -appendToFile {temp_file} {hdfs_path}"
-                subprocess.run(append_cmd, shell=True, check=True)
-            else:
-                # Le fichier n'existe pas, le créer
-                put_cmd = f"hdfs dfs -put {temp_file} {hdfs_path}"
-                subprocess.run(put_cmd, shell=True, check=True)
-            
-            messages_count += 1
-            print(f"Message écrit dans HDFS - Total: {messages_count}")
-        except subprocess.CalledProcessError as e:
-            print(f"Erreur lors de l'écriture dans HDFS: {e}")
-            
-except KeyboardInterrupt:
-    print("Programme arrêté par l'utilisateur")
-finally:
-    # Fermer le consumer
-    c.close()
-    print("Consumer fermé")
-    # Supprimer le fichier temporaire
-    if os.path.exists(temp_file):
-        os.remove(temp_file)
-```
+Utilisez ensuite le fichier `consumeinhdfs.py` pour lire les messages Kafka et les écrire automatiquement dans un fichier sur HDFS.
 
 Exécutez le script et produisez de nouveaux messages:
 
@@ -275,38 +129,7 @@ hdfs dfs -cat /user/root/data/data_stream.txt
 
 ## Étape 6: Analyse des données avec Spark
 
-Créez un script Python `countmessagespark.py` pour analyser les données avec Spark:
-
-```python
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode, split, col
-
-# Création de la session Spark
-spark = SparkSession.builder \
-    .appName("Analyse de données Kafka") \
-    .getOrCreate()
-
-# Utilisation du chemin correct
-df = spark.read.text("hdfs://hadoop-master:9000/user/root/data/data_stream.txt")
-
-# Afficher les premières lignes pour vérification
-print("Aperçu des données:")
-df.show(5, truncate=False)
-
-# Effectuer un comptage simple
-word_count = df.count()
-print("Nombre total de messages:", word_count)
-
-# Pour un comptage de mots plus détaillé
-words_df = df.select(explode(split(col("value"), " ")).alias("word"))
-word_counts = words_df.groupBy("word").count().orderBy("count", ascending=False)
-
-print("Top 10 des mots les plus fréquents:")
-word_counts.show(10)
-
-# Arrêter la session Spark
-spark.stop()
-```
+Lancez le fichier `countmessagespark.py` pour lire les données HDFS avec Spark et effectuer une première analyse (nombre de messages, mots les plus fréquents, etc.).
 
 Exécutez le script:
 
