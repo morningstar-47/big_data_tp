@@ -168,13 +168,13 @@ Ajoutez cette configuration:
 </property>
 ```
 
-## 👥 Contributeurs
+## Contributeurs
 
 | Nom | GitHub |
 |-----|--------|
 | 🧑‍💻 J.C Emmanuel Mopeno-Bia | [morningstar-47](https://github.com/morningstar-47) |
 | 🧑‍💻 Mohamed Coulibaly | [momo](https://github.com/PseudoCollegue1) |
-| 🧑‍💻 Collègue 2 | [@PseudoCollegue2](https://github.com/PseudoCollegue2) |
+| 🧑‍💻 Anik BOUDJEKA | [Anikgraphic12](https://github.com/Anikgraphic12) |
 | 🧑‍💻 Collègue 3 | [@PseudoCollegue3](https://github.com/PseudoCollegue3) |
 
 
