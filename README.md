@@ -14,6 +14,15 @@ Ce TP permet de mettre en place un environnement Big Data complet avec Apache Ka
 - VS Code (ou autre éditeur de code)
 - Connaissances de base en Python
 
+## Contributeurs
+
+| Nom | GitHub |
+|-----|--------|
+| 🧑‍💻 J.C Emmanuel Mopeno-Bia | [morningstar-47](https://github.com/morningstar-47) |
+| 🧑‍💻 Mohamed Coulibaly | [Bigmatrix2](https://github.com/Bigmatrix2) |
+| 🧑‍💻 Anik BOUDJEKA | [Anikgraphic12](https://github.com/Anikgraphic12) |
+
+
 ## Étape 1: Configuration de l'environnement Docker
 
 Créez un nouveau projet VS Code nommé TP1BigData, puis lancez les commandes suivantes dans le terminal:
@@ -167,15 +176,6 @@ Ajoutez cette configuration:
   <description>Block size for HDFS</description>
 </property>
 ```
-
-## Contributeurs
-
-| Nom | GitHub |
-|-----|--------|
-| 🧑‍💻 J.C Emmanuel Mopeno-Bia | [morningstar-47](https://github.com/morningstar-47) |
-| 🧑‍💻 Mohamed Coulibaly | [Bigmatrix2](https://github.com/Bigmatrix2) |
-| 🧑‍💻 Anik BOUDJEKA | [Anikgraphic12](https://github.com/Anikgraphic12) |
-
 ## Conclusion
 
 Ce TP vous a permis de mettre en place un pipeline de données complet avec les technologies Big Data les plus courantes. Vous avez appris à :
